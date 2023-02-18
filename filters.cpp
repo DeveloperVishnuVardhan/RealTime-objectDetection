@@ -61,5 +61,168 @@ int threshold(cv::Mat &src, cv::Mat &dst) {
 }
 
 /*
- * Function to implement Grassfire Transform.
+ * Function to implement 8-connected Grassfire Transform.
+ * src: Thresholded HSV Image,
  */
+vector<vector<int>> GrassfireTransform1(cv::Mat &src) {
+  vector<vector<int>> dist(src.rows, vector<int>(src.cols, 0));
+  // pass-1
+  for (int i = 0; i < src.rows; i++) {
+	// create row pointers to access indexes.
+	cv::Vec3b *rptr = src.ptr<cv::Vec3b>(i);
+	for (int j = 0; j < src.cols; j++) {
+	  int hue = rptr[j][0];
+	  int sat = rptr[j][1];
+	  int val = rptr[j][2];
+
+	  if (hue!=0 && sat!=0 && val!=0) {
+		dist[i][j] = 0;
+	  } else {
+		// Becareful to handle out of bound cases.
+		int top, left, top_dist, top_left_dist, top_right_dist, left_dist;
+		top = i - 1;
+		left = j - 1;
+
+		if (top < 0) {
+		  top_dist = 0;
+		  top_left_dist = 0;
+		  top_right_dist = 0;
+		} else if (left < 0) {
+		  left_dist = 0;
+		  top_left_dist = 0;
+		} else {
+		  top_dist = dist[i - 1][j];
+		  left_dist = dist[i][j - 1];
+		  top_left_dist = dist[i - 1][j - 1];
+		  top_right_dist = dist[i - 1][j + 1];
+		}
+		int min_1 = min(top_dist, left_dist);
+		int min_2 = min(top_left_dist, top_right_dist);
+		dist[i][j] = min(min_1, min_2) + 1; // min of neigh pixel + 1
+	  }
+	}
+  }
+
+  // pass-2: Iterate in reverse direction
+  for (int i = dist.size() - 1; i >= 0; --i) {
+	for (int j = dist[i].size() - 1; j >= 0; --j) {
+	  int down, right, down_dist, right_dist, down_right;
+	  down = i + 1;
+	  right = j + 1;
+
+	  if (down >= dist.size()) {
+		down_dist = 0;
+		down_right = 0;
+	  } else if (right >= dist[i].size()) {
+		right_dist = 0;
+		down_right = 0;
+	  } else {
+		down_dist = dist[i + 1][j];
+		right_dist = dist[i][j + 1];
+		down_right = dist[i + 1][j + 1];
+	  }
+	  int curr_dis = dist[i][j];
+	  int nei_dis = min(down_dist, min(right_dist, down_right)) + 1;
+	  dist[i][j] = min(curr_dis, nei_dis);
+	}
+  }
+
+  return dist;
+}
+
+/*
+ * Function to perform 4-connected Grassfire Transform.
+ */
+vector<vector<int>> GrassfireTransform(cv::Mat &src) {
+  vector<vector<int>> dist(src.rows, vector<int>(src.cols, 0));
+  // pass-1
+  for (int i = 0; i < src.rows; i++) {
+	// create row pointers to access indexes.
+	cv::Vec3b *rptr = src.ptr<cv::Vec3b>(i);
+	for (int j = 0; j < src.cols; j++) {
+	  int hue = rptr[j][0];
+	  int sat = rptr[j][1];
+	  int val = rptr[j][2];
+
+	  if (hue==0 && sat==0 && val==0) {
+		dist[i][j] = 0;
+	  } else {
+		// Becareful to handle out of bound cases.
+		int top, left, top_dist, left_dist;
+		top = i - 1;
+		left = j - 1;
+
+		if (top < 0) top_dist = 0;
+		else if (left < 0) left_dist = 0;
+		else {
+		  top_dist = dist[i - 1][j];
+		  left_dist = dist[i][j - 1];
+		}
+		dist[i][j] = min(top_dist, left_dist) + 1; // min of neigh pixel + 1
+	  }
+	}
+  }
+
+  // pass-2: Iterate in reverse direction
+  for (int i = dist.size() - 1; i >= 0; --i) {
+	for (int j = dist[i].size() - 1; j >= 0; --j) {
+	  int down, right, down_dist, right_dist;
+	  down = i + 1;
+	  right = j + 1;
+
+	  if (down >= dist.size()) down_dist = 0;
+	  else if (right >= dist[i].size()) right_dist = 0;
+	  else {
+		down_dist = dist[i + 1][j];
+		right_dist = dist[i][j + 1];
+	  }
+	  int curr_dis = dist[i][j];
+	  int nei_dis = min(down_dist, right_dist) + 1;
+	  dist[i][j] = min(curr_dis, nei_dis);
+	}
+  }
+
+  return dist;
+}
+
+/*
+ * Funtion to perform Erosion.
+ *
+ */
+int Erosion(vector<vector<int>> &distances, cv::Mat &src, int erosion_length) {
+  //dst = cv::Mat::zeros(src.rows, src.size, CV_8UC3);
+  for (int i = 0; i < src.rows; i++) {
+	// create a row pointer to access pixesls
+	cv::Vec3b *rptr = src.ptr<cv::Vec3b>(i);
+	//cv::Vec3b *dptr = dst.ptr<cv::Vec3b>(i);
+	for (int j = 0; j < src.cols; j++) {
+	  if (distances[i][j] <= erosion_length) {
+		rptr[j][0] = 0;
+		rptr[j][1] = 0;
+		rptr[j][2] = 0;
+	  }
+	}
+  }
+  return 0;
+}
+
+/*
+ * Funtion to perform Dialation.
+ *
+ */
+int Dialation(vector<vector<int>> &distances, cv::Mat &src, int erosion_length) {
+  //dst = cv::Mat::zeros(src.rows, src.size, CV_8UC3);
+  for (int i = 0; i < src.rows; i++) {
+	// create a row pointer to access pixesls
+	cv::Vec3b *rptr = src.ptr<cv::Vec3b>(i);
+	//cv::Vec3b *dptr = dst.ptr<cv::Vec3b>(i);
+	for (int j = 0; j < src.cols; j++) {
+	  if (distances[i][j] <= erosion_length) {
+		rptr[j][0] = 179;
+		rptr[j][1] = 25;
+		rptr[j][2] = 255;
+	  }
+	}
+  }
+  return 0;
+}
