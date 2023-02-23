@@ -21,7 +21,6 @@ int main(int argc, char *argv[]) {
 
   cv::Mat blurred_color_image, HSV_Image; // Mat object to store HSV_image.
   cv::Mat HSVthresholded_image; // Mat object to store thresholded image.
-  cv::Mat Eroded_Hsv;
   cv::Mat thresholded_Image;
 
   while (true) {
@@ -38,21 +37,22 @@ int main(int argc, char *argv[]) {
 	cv::cvtColor(blurred_color_image, HSV_Image, cv::COLOR_BGR2HSV);
 	threshold(HSV_Image, HSVthresholded_image);
 	vector<vector<int>> Erosion_distance = GrassfireTransform(HSVthresholded_image);
-	/*for (int i = 0; i < Erosion_distance.size(); i++) {
-	  for (int j = 0; j < Erosion_distance[i].size();j++) {
-		cout << Erosion_distance[i][j] << " ";
-	  }
-	  cout << endl;
-	}*/
 	Erosion(Erosion_distance, HSVthresholded_image, 2);
 	vector<vector<int>> Dialation_distance = GrassfireTransform1(HSVthresholded_image);
 	Dialation(Dialation_distance, HSVthresholded_image, 2);
+	cv::Mat thresholded_Image;
 	cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
+
+	cv::Mat Segmented_Image = SegmentImage(thresholded_Image); // perform segmentation.
+
+
+
 
 	// display the windows
 	cv::namedWindow("color-Image", 1);
 	cv::imshow("color-Image", color_image);
 	cv::imshow("Threshold-Image", thresholded_Image);
+	cv::imshow("segmented-Image", Segmented_Image);
 	int k = cv::waitKey(10);
 
 	if (k=='q') {

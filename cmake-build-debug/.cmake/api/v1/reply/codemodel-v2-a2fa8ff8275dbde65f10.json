@@ -15,7 +15,8 @@
 					"source" : ".",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -30,7 +31,8 @@
 					"name" : "main.cpp",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -38,8 +40,15 @@
 			[
 				{
 					"directoryIndex" : 0,
+					"id" : "imgDisplay.cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-imgDisplay.cpp-Debug-a63ae4a539fb8bc01c36.json",
+					"name" : "imgDisplay.cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
 					"id" : "main.cpp::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-main.cpp-Debug-e7a81a164aa10a9397a3.json",
+					"jsonFile" : "target-main.cpp-Debug-3e857475533ae3f93721.json",
 					"name" : "main.cpp",
 					"projectIndex" : 0
 				}

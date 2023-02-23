@@ -8,8 +8,15 @@
 #include<iostream>
 #include<opencv2/opencv.hpp>
 #include "filters.h"
+#include "csv_util.h"
+#include <cmath>
 
 using namespace std;
+
+// comparator function to sort vector pair based on value.
+bool cmp(pair<int, int> &a, pair<int, int> &b) {
+  return a.second < b.second;
+}
 
 // function to fill pixels value in each hue, sat, val channels of hsv color space.
 void fill_pixels(cv::Vec3b *rptr, int col, int h_value, int s_value, int v_value) {
@@ -62,7 +69,8 @@ int threshold(cv::Mat &src, cv::Mat &dst) {
 
 /*
  * Function to implement 8-connected Grassfire Transform.
- * src: Thresholded HSV Image,
+ * src: Thresholded HSV Image.
+ * Return a 2d vector where each cell contains distance to nearest foreground pixel.
  */
 vector<vector<int>> GrassfireTransform1(cv::Mat &src) {
   vector<vector<int>> dist(src.rows, vector<int>(src.cols, 0));
@@ -132,6 +140,8 @@ vector<vector<int>> GrassfireTransform1(cv::Mat &src) {
 
 /*
  * Function to perform 4-connected Grassfire Transform.
+ * src: Thresholded HSV Image.
+ * Return a 2d vector where each cell contains distance to nearest background pixel.
  */
 vector<vector<int>> GrassfireTransform(cv::Mat &src) {
   vector<vector<int>> dist(src.rows, vector<int>(src.cols, 0));
@@ -187,7 +197,8 @@ vector<vector<int>> GrassfireTransform(cv::Mat &src) {
 
 /*
  * Funtion to perform Erosion.
- *
+ * Arg1-distances: distances matrix after performing Grassfire transform.
+ * Arg-2 erosion_length: Number of erosions to perform.
  */
 int Erosion(vector<vector<int>> &distances, cv::Mat &src, int erosion_length) {
   //dst = cv::Mat::zeros(src.rows, src.size, CV_8UC3);
@@ -208,21 +219,125 @@ int Erosion(vector<vector<int>> &distances, cv::Mat &src, int erosion_length) {
 
 /*
  * Funtion to perform Dialation.
- *
+ * Arg1-distances: distances matrix after performing Grassfire transform.
+ * Arg-2 erosion_length: Number of dialtaions to perform.
  */
-int Dialation(vector<vector<int>> &distances, cv::Mat &src, int erosion_length) {
+int Dialation(vector<vector<int>> &distances, cv::Mat &src, int dialation_length) {
   //dst = cv::Mat::zeros(src.rows, src.size, CV_8UC3);
   for (int i = 0; i < src.rows; i++) {
 	// create a row pointer to access pixesls
 	cv::Vec3b *rptr = src.ptr<cv::Vec3b>(i);
 	//cv::Vec3b *dptr = dst.ptr<cv::Vec3b>(i);
 	for (int j = 0; j < src.cols; j++) {
-	  if (distances[i][j] <= erosion_length) {
+	  if (distances[i][j] <= dialation_length) {
 		rptr[j][0] = 179;
 		rptr[j][1] = 25;
 		rptr[j][2] = 255;
 	  }
 	}
   }
+  return 0;
+}
+
+/*
+ * Function to perform Segmentation.
+ * Arg-1-src: The image on which segmentation to be performed.
+ * returns a new Image where the Top-N components are filled with random colors.
+ */
+cv::Mat SegmentImage(cv::Mat &src) {
+  // performing segmentation(connected-component analysis).
+  cv::Mat Thresholded_Grayscale_img;
+  cv::Mat segmented_image = src.clone();
+  cv::cvtColor(src, Thresholded_Grayscale_img, cv::COLOR_BGR2GRAY);
+  cv::Mat ImageIds, stats_matrix, centroids;
+  int num_components =
+	  cv::connectedComponentsWithStats(Thresholded_Grayscale_img, ImageIds, stats_matrix, centroids, 4);
+
+  // Generate a random color for each component
+  cv::RNG rng(0xFFFFFFFF);
+  std::vector<cv::Scalar> colors(num_components);
+  for (int i = 1; i < num_components; i++) {
+	colors[i] = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+  }
+
+// Label each component with a different color
+  for (int i = 1; i < num_components; i++) {
+	cv::Rect rect(stats_matrix.at<int>(i, cv::CC_STAT_LEFT), stats_matrix.at<int>(i, cv::CC_STAT_TOP),
+				  stats_matrix.at<int>(i, cv::CC_STAT_WIDTH), stats_matrix.at<int>(i, cv::CC_STAT_HEIGHT));
+	cv::rectangle(segmented_image, rect, colors[i], 2);
+  }
+  return segmented_image;
+}
+
+/*
+ * Function to compute the moments of regions in a given image.
+ */
+cv::Mat calculate_moments(cv::Mat &src) {
+  cv::Mat Thresholded_Grayscale_img, central_moment_image;
+  central_moment_image = src.clone();
+  cv::cvtColor(src, Thresholded_Grayscale_img, cv::COLOR_BGR2GRAY);
+
+  // calculate the moments of the Image.
+  cv::Moments moments = cv::moments(Thresholded_Grayscale_img);
+
+  // caluclate the Hu moments of the Image.
+  cv::Mat hu_moments;
+  cv::HuMoments(moments, hu_moments);
+
+  // calculate the axis of central moments.
+  double u20 = hu_moments.at<double>(2, 0);
+  double u02 = hu_moments.at<double>(0, 2);
+  double u11 = hu_moments.at<double>(1, 1);
+  double theta = 0.5*::atan2(2*u11, u20 - u02);
+
+  // calculate centroid of the image.
+  double x_cor = moments.m10/moments.m00;
+  double y_cor = moments.m01/moments.m00;
+
+  // calculate the endpoints of the line for the axis of central moments.
+  double cos_theta = cos(theta);
+  double sin_theta = sin(theta);
+
+  double x1_point = x_cor - 100*sin_theta;
+  double y1_point = y_cor - 100*cos_theta;
+  double x2_point = x_cor + 100*sin_theta;
+  double y2_point = y_cor + 100*cos_theta;
+
+
+  // Draw axis of central moment on the Image.
+  cv::line(central_moment_image,
+		   cv::Point(x1_point, y1_point),
+		   cv::Point(x2_point, y2_point),
+		   cv::Scalar(0, 0, 255),
+		   2);
+
+  return central_moment_image;
+}
+
+/*
+ * Function to collect training data.
+ */
+int collect_data(cv::Mat &src) {
+  vector<double> features;
+  cv::Mat Thresholded_Grayscale_img, central_moment_image;
+  central_moment_image = src.clone();
+  cv::cvtColor(src, Thresholded_Grayscale_img, cv::COLOR_BGR2GRAY);
+
+  // calculate the moments of the Image.
+  cv::Moments moments = cv::moments(Thresholded_Grayscale_img);
+
+  // caluclate the Hu moments of the Image.
+  cv::Mat hu_moments;
+  cv::HuMoments(moments, hu_moments);
+
+  for (int i = 0; i < hu_moments.rows; i++) {
+	features.push_back(-1 *::copysign(1.0, hu_moments.at<double>(i)) *::log10(hu_moments.at<double>(i)));
+  }
+
+  // Taking the label from console.
+  char label[256];
+  char filename[256] = "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv";
+  cin >> label;
+  append_image_data_csv( filename, label, features, 0);
   return 0;
 }
