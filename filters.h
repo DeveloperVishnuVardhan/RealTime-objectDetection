@@ -51,5 +51,7 @@ cv::Mat calculate_moments(cv::Mat &src);
 /*
  * Function to collect training data.
  */
+// helper function to get moment values.
+cv::Mat get_moments(cv::Mat &src);
 int collect_data(cv::Mat &src);
 #endif //MAIN_CPP__FILTERS_H_

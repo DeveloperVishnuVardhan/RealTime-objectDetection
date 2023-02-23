@@ -68,7 +68,7 @@ int getint(FILE *fp, int *v) {
 
   The function returns true if it reaches the end of a line or the file
  */
-int getfloat(FILE *fp, float *v) {
+int getfloat(FILE *fp, double *v) {
   char s[256];
   int p = 0;
   int eol = 0;
@@ -139,9 +139,9 @@ int append_image_data_csv( char *filename, char *image_filename, std::vector<dou
 
 /*
   Given a file with the format of a string as the first column and
-  floating point numbers as the remaining columns, this function
+  double point numbers as the remaining columns, this function
   returns the filenames as a std::vector of character arrays, and the
-  remaining data as a 2D std::vector<float>.
+  remaining data as a 2D std::vector<double>.
 
   filenames will contain all of the image file names.
   data will contain the features calculated from each image.
@@ -151,9 +151,9 @@ int append_image_data_csv( char *filename, char *image_filename, std::vector<dou
 
   The function returns a non-zero value if something goes wrong.
  */
-int read_image_data_csv( char *filename, std::vector<char *> &filenames, std::vector<std::vector<float>> &data, int echo_file ) {
+int read_image_data_csv( char *filename, std::vector<char *> &filenames, std::vector<std::vector<double>> &data, int echo_file ) {
   FILE *fp;
-  float fval;
+  double fval;
   char img_file[256];
 
   fp = fopen(filename, "r");
@@ -164,7 +164,7 @@ int read_image_data_csv( char *filename, std::vector<char *> &filenames, std::ve
 
   printf("Reading %s\n", filename);
   for(;;) {
-	std::vector<float> dvec;
+	std::vector<double> dvec;
 
 
 	// read the filename

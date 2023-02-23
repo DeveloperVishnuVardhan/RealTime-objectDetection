@@ -16,7 +16,8 @@
 					"targetIndexes" : 
 					[
 						0,
-						1
+						1,
+						2
 					]
 				}
 			],
@@ -32,7 +33,8 @@
 					"targetIndexes" : 
 					[
 						0,
-						1
+						1,
+						2
 					]
 				}
 			],
@@ -40,15 +42,22 @@
 			[
 				{
 					"directoryIndex" : 0,
+					"id" : "classify.cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-classify.cpp-Debug-9e2cee033982093af246.json",
+					"name" : "classify.cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
 					"id" : "imgDisplay.cpp::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-imgDisplay.cpp-Debug-a63ae4a539fb8bc01c36.json",
+					"jsonFile" : "target-imgDisplay.cpp-Debug-15d28560b0591be80113.json",
 					"name" : "imgDisplay.cpp",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "main.cpp::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-main.cpp-Debug-3e857475533ae3f93721.json",
+					"jsonFile" : "target-main.cpp-Debug-f1e45f13f5684b6d63c9.json",
 					"name" : "main.cpp",
 					"projectIndex" : 0
 				}

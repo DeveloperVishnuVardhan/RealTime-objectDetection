@@ -24,6 +24,22 @@ void fill_pixels(cv::Vec3b *rptr, int col, int h_value, int s_value, int v_value
   rptr[col][1] = s_value;
   rptr[col][2] = v_value;
 }
+
+// helper function to get moment values.
+cv::Mat get_moments(cv::Mat &src) {
+  cv::Mat Thresholded_Grayscale_img, central_moment_image;
+  central_moment_image = src.clone();
+  cv::cvtColor(src, Thresholded_Grayscale_img, cv::COLOR_BGR2GRAY);
+
+  // calculate the moments of the Image.
+  cv::Moments moments = cv::moments(Thresholded_Grayscale_img);
+
+  // caluclate the Hu moments of the Image.
+  cv::Mat hu_moments;
+  cv::HuMoments(moments, hu_moments);
+  return hu_moments;
+}
+
 /*
  * Function to implement Thresholding.
  * src: Source Image on which the median filter needs to be applied.
@@ -319,25 +335,17 @@ cv::Mat calculate_moments(cv::Mat &src) {
  */
 int collect_data(cv::Mat &src) {
   vector<double> features;
-  cv::Mat Thresholded_Grayscale_img, central_moment_image;
-  central_moment_image = src.clone();
-  cv::cvtColor(src, Thresholded_Grayscale_img, cv::COLOR_BGR2GRAY);
-
-  // calculate the moments of the Image.
-  cv::Moments moments = cv::moments(Thresholded_Grayscale_img);
-
-  // caluclate the Hu moments of the Image.
-  cv::Mat hu_moments;
-  cv::HuMoments(moments, hu_moments);
+  cv::Mat hu_moments = get_moments(src);
 
   for (int i = 0; i < hu_moments.rows; i++) {
-	features.push_back(-1 *::copysign(1.0, hu_moments.at<double>(i)) *::log10(hu_moments.at<double>(i)));
+	features.push_back(-1*::copysign(1.0, hu_moments.at<double>(i))*::log10(hu_moments.at<double>(i)));
   }
 
   // Taking the label from console.
   char label[256];
-  char filename[256] = "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv";
+  char filename[256] =
+	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv";
   cin >> label;
-  append_image_data_csv( filename, label, features, 0);
+  append_image_data_csv(filename, label, features, 0);
   return 0;
 }
