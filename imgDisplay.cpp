@@ -14,23 +14,23 @@
 using namespace std;
 int main(int argc, char *argv[]) {
   string img_path =
-	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Proj03Examples/lion10.png";
+	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Proj03Examples/segment-test.png";
   cv::Mat color_image = cv::imread(img_path); // Mat object to store original frame.
   if (color_image.empty()) {
 	cout << "could not load and display the image" << endl;
 	cin.get(); // wait for a key stroke
 	exit(-1);
   }
-  cv::Mat blurred_color_image, HSV_Image; // Mat object to store HSV_image.
-  cv::medianBlur(color_image, blurred_color_image, 5);
-  cv::cvtColor(blurred_color_image, HSV_Image, cv::COLOR_BGR2HSV);
+  cv::Mat blurred_color_image, HSV_Image; // Mat object to store blurred, HSV_images.
+  cv::medianBlur(color_image, blurred_color_image, 5); // Blurring the color Image.
+  cv::cvtColor(blurred_color_image, HSV_Image, cv::COLOR_BGR2HSV); // Turing into HSV color space.
   cv::Mat HSVthresholded_image; // Mat object to store thresholded image.
-  threshold(HSV_Image, HSVthresholded_image);
+  threshold(HSV_Image, HSVthresholded_image); // Threshold the Hsv image.
   vector<vector<int>> Erosion_distance = GrassfireTransform(HSVthresholded_image); // Vector to store Erosion distances.
   Erosion(Erosion_distance, HSVthresholded_image, 5); // Perfrom Erosion.
   vector<vector<int>> Dialation_distance = GrassfireTransform1(HSVthresholded_image); // Vector to store Dialation distances.
   Dialation(Dialation_distance, HSVthresholded_image, 5); // Perform Dialation.
-  cv::Mat thresholded_Image;
+  cv::Mat thresholded_Image; // mat object to store final thresholded RGB Image.
   cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
 
   cv::Mat Segmented_Image = SegmentImage(thresholded_Image); // perform segmentation.
@@ -48,10 +48,10 @@ int main(int argc, char *argv[]) {
 	//cv::imshow("Segmented-Image", color_image);
 	int k = cv::waitKey(0);
 
-	if (k=='q') {
+	if (k=='q') { // destroy all windows when 'q' is pressed.
 	  cv::destroyAllWindows();
 	  break;
-	} else if (k == 'n') {
+	} else if (k == 'n') { // save the image features to db when 'N' is pressed.
 	  collect_data(thresholded_Image);
 	}
 

@@ -25,10 +25,9 @@ void fill_pixels(cv::Vec3b *rptr, int col, int h_value, int s_value, int v_value
   rptr[col][2] = v_value;
 }
 
-// helper function to get moment values.
+// helper function to get moment values given a thresholded RGB image.
 cv::Mat get_moments(cv::Mat &src) {
   cv::Mat Thresholded_Grayscale_img, central_moment_image;
-  central_moment_image = src.clone();
   cv::cvtColor(src, Thresholded_Grayscale_img, cv::COLOR_BGR2GRAY);
 
   // calculate the moments of the Image.
@@ -42,8 +41,8 @@ cv::Mat get_moments(cv::Mat &src) {
 
 /*
  * Function to implement Thresholding.
- * src: Source Image on which the median filter needs to be applied.
- * dst: Destination container to store the Image after Applying median Filter.
+ * src: Source HSV Image on which the Thresholding need to be applied.
+ * dst: Destination container to store the Image after Applying Thresholding.
  */
 int threshold(cv::Mat &src, cv::Mat &dst) {
   dst = cv::Mat::zeros(src.rows, src.cols, CV_8UC3);
@@ -69,7 +68,6 @@ int threshold(cv::Mat &src, cv::Mat &dst) {
 	  int val = rptr[j][2];
 	  if ((hue >= hue_low && hue <= hue_high) && (sat >= sat_low && sat <= sat_high)
 		  && (val >= val_low && val <= val_high)) {
-		//cout << "thre" << endl;
 		fill_pixels(dptr, j, 0, 0, 0);
 	  } else {
 		if (sat < 150) {
@@ -84,7 +82,7 @@ int threshold(cv::Mat &src, cv::Mat &dst) {
 }
 
 /*
- * Function to implement 8-connected Grassfire Transform.
+ * Function to implement 8-connected Grassfire Transform Given a thresholded HSV Image.
  * src: Thresholded HSV Image.
  * Return a 2d vector where each cell contains distance to nearest foreground pixel.
  */
@@ -155,7 +153,7 @@ vector<vector<int>> GrassfireTransform1(cv::Mat &src) {
 }
 
 /*
- * Function to perform 4-connected Grassfire Transform.
+ * Function to perform 4-connected Grassfire Transform given HSV thresholded Image.
  * src: Thresholded HSV Image.
  * Return a 2d vector where each cell contains distance to nearest background pixel.
  */
@@ -257,7 +255,7 @@ int Dialation(vector<vector<int>> &distances, cv::Mat &src, int dialation_length
 
 /*
  * Function to perform Segmentation.
- * Arg-1-src: The image on which segmentation to be performed.
+ * Arg-1-src: Thresholded RGB image on which segmentation to be performed.
  * returns a new Image where the Top-N components are filled with random colors.
  */
 cv::Mat SegmentImage(cv::Mat &src) {
@@ -276,7 +274,7 @@ cv::Mat SegmentImage(cv::Mat &src) {
 	colors[i] = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
   }
 
-// Label each component with a different color
+  // Label each component with a different color
   for (int i = 1; i < num_components; i++) {
 	cv::Rect rect(stats_matrix.at<int>(i, cv::CC_STAT_LEFT), stats_matrix.at<int>(i, cv::CC_STAT_TOP),
 				  stats_matrix.at<int>(i, cv::CC_STAT_WIDTH), stats_matrix.at<int>(i, cv::CC_STAT_HEIGHT));
@@ -287,6 +285,8 @@ cv::Mat SegmentImage(cv::Mat &src) {
 
 /*
  * Function to compute the moments of regions in a given image.
+ * Args-1-src  : Thrsholded RGB Image.
+ * Returns a new Image with central Axis drawn on it.
  */
 cv::Mat calculate_moments(cv::Mat &src) {
   cv::Mat Thresholded_Grayscale_img, central_moment_image;
@@ -331,7 +331,8 @@ cv::Mat calculate_moments(cv::Mat &src) {
 }
 
 /*
- * Function to collect training data.
+ * Function that stores Moments as fearues in a csv file given a Thresholded RGB Image.
+ * Args-1-src  : Thresholded RGB Image.
  */
 int collect_data(cv::Mat &src) {
   vector<double> features;
