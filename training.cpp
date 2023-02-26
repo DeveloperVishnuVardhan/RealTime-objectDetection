@@ -44,7 +44,7 @@ void iterateDirectory(fs::path path) {
 	  if (color_image.empty()) {
 		continue;
 	  }
-	  cv::Mat blurred_color_image, HSV_Image; // Mat object to store blurred, HSV_images.
+	  /*cv::Mat blurred_color_image, HSV_Image; // Mat object to store blurred, HSV_images.
 	  cv::medianBlur(color_image, blurred_color_image, 5); // Blurring the color Image.
 	  cv::cvtColor(blurred_color_image, HSV_Image, cv::COLOR_BGR2HSV); // Turing into HSV color space.
 	  cv::Mat HSVthresholded_image; // Mat object to store thresholded image.
@@ -56,10 +56,10 @@ void iterateDirectory(fs::path path) {
 		  Dialation_distance = GrassfireTransform1(HSVthresholded_image); // Vector to store Dialation distances.
 	  Dialation(Dialation_distance, HSVthresholded_image, 5); // Perform Dialation.
 	  cv::Mat thresholded_Image; // mat object to store final thresholded RGB Image.
-	  cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
+	  cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);*/
 	  //cout << entry.path();
 	  string label = get_label(entry.path(), '/');
-	  collect_data(thresholded_Image, label);
+	  collect_data(color_image, label);
 	}
   }
 }
