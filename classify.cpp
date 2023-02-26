@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   if (::strcmp(classifier, "scaledeuclidean")==0)
 	distances = scaledEuclidean(test_color_img, thresholded_Image, train_db);
   if (::strcmp(classifier, "knn")==0) {
-	distances = knnClassifier(test_color_img, thresholded_Image, train_db, 15);
+	distances = knnClassifier(test_color_img, thresholded_Image, train_db, 5);
   }
 
   for (int i = 0; i < distances.size(); i++) {

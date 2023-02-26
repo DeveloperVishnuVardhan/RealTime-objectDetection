@@ -14,7 +14,7 @@
 using namespace std;
 int main(int argc, char *argv[]) {
   string img_path =
-	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Data/Train/Mouse/IMG_1319.png";
+	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Data/Train/Mouse/IMG_1309.png";
   cv::Mat color_image = cv::imread(img_path); // Mat object to store original frame.
   if (color_image.empty()) {
 	cout << "could not load and display the image" << endl;

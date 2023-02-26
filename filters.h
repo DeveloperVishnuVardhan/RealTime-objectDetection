@@ -58,11 +58,11 @@ cv::Mat SegmentImage(cv::Mat &src);
 cv::Mat calculate_moments(cv::Mat &src);
 
 // helper function to get moment values.
-cv::Mat get_moments(cv::Mat &src);
+std::vector<double> get_moments(cv::Mat &src);
 
 /*
  * Function that stores Moments as fearues in a csv file given a Thresholded RGB Image.
  * Args-1-src  : Thresholded RGB Image.
  */
-int collect_data(cv::Mat &src, std::string label="");
+int collect_data(cv::Mat &src, std::string label = "");
 #endif //MAIN_CPP__FILTERS_H_

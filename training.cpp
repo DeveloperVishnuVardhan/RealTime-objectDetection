@@ -59,7 +59,7 @@ void iterateDirectory(fs::path path) {
 	  cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
 	  //cout << entry.path();
 	  string label = get_label(entry.path(), '/');
-	  collect_data(thresholded_Image, entry.path());
+	  collect_data(thresholded_Image, label);
 	}
   }
 }

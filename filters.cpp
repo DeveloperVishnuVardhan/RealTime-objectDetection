@@ -26,17 +26,37 @@ void fill_pixels(cv::Vec3b *rptr, int col, int h_value, int s_value, int v_value
 }
 
 // helper function to get moment values given a thresholded RGB image.
-cv::Mat get_moments(cv::Mat &src) {
+vector<double> get_moments(cv::Mat &src) {
   cv::Mat Thresholded_Grayscale_img, central_moment_image;
   cv::cvtColor(src, Thresholded_Grayscale_img, cv::COLOR_BGR2GRAY);
-
+  cv::imshow("testing", Thresholded_Grayscale_img);
   // calculate the moments of the Image.
   cv::Moments moments = cv::moments(Thresholded_Grayscale_img);
 
   // caluclate the Hu moments of the Image.
   cv::Mat hu_moments;
   cv::HuMoments(moments, hu_moments);
-  return hu_moments;
+
+  // find the mean of Hue moments.
+  vector<double> features;
+  double total_sum, mean, std, std_dev;
+  for (int i = 0; i < 7; i++) {
+	total_sum += hu_moments.at<double>(i);
+  }
+  mean = total_sum/7;
+
+  // find standard-deviation.
+  for (int i = 0; i < 7; i++) {
+	std += (hu_moments.at<double>(i) - mean)*(hu_moments.at<double>(i) - mean);
+  }
+  std_dev = ::sqrt(std/7);
+
+  // push standardized values into feature vector.
+  for (int i = 0; i < 7; i++) {
+	double val = (hu_moments.at<double>(i) - mean)/std_dev;
+	features.push_back(val);
+  }
+  return features;
 }
 
 /*
@@ -319,6 +339,8 @@ cv::Mat calculate_moments(cv::Mat &src) {
   double x2_point = x_cor + 100*sin_theta;
   double y2_point = y_cor + 100*cos_theta;
 
+  double angle = 0.5*(::atan((2*u11)/(u20 - u02)));
+
 
   // Draw axis of central moment on the Image.
   cv::line(central_moment_image,
@@ -327,6 +349,33 @@ cv::Mat calculate_moments(cv::Mat &src) {
 		   cv::Scalar(0, 0, 255),
 		   2);
 
+  // draw a oriented bounding box.
+  cv::Point centerPoint(x_cor, y_cor);
+  cv::Scalar color = cv::Scalar(234, 234, 123);
+
+  // find the size of rectangle.
+  cv::Mat ImageIds, stats_matrix, centroids;
+  int num_components =
+	  cv::connectedComponentsWithStats(Thresholded_Grayscale_img, ImageIds, stats_matrix, centroids, 4);
+  double height = stats_matrix.at<int>(2, cv::CC_STAT_HEIGHT);
+  double width = stats_matrix.at<int>(2, cv::CC_STAT_HEIGHT);
+
+  cout << height << " " << width << endl;
+
+  // create a rotated rectangle.
+  cv::RotatedRect rotatedRectangle(centerPoint, cv::Size2f(width, height), angle);
+
+  // We take the edges that OpenCV calculated for us
+  cv::Point2f vertices2f[4];
+  rotatedRectangle.points(vertices2f);
+
+  // Convert them so we can use them in a fillConvexPoly
+  for (int i = 0; i < 4; ++i) {
+	cv::line(central_moment_image, vertices2f[i], vertices2f[(i + 1)%4], cv::Scalar(0, 255, 0), 2);
+  }
+
+  // Now we can fill the rotated rectangle with our specified color
+  cv::Rect brect = rotatedRectangle.boundingRect();
   return central_moment_image;
 }
 
@@ -336,12 +385,7 @@ cv::Mat calculate_moments(cv::Mat &src) {
  */
 int collect_data(cv::Mat &src, string label) {
   vector<double> features;
-  cv::Mat hu_moments = get_moments(src);
-
-  for (int i = 0; i < hu_moments.rows; i++) {
-	features.push_back(log(abs(hu_moments.at<double>(i))));
-  }
-
+  features = get_moments(src);
   // Taking the label from console.
   char filename[256] =
 	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv";
