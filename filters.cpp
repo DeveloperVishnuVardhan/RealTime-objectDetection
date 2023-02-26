@@ -15,7 +15,7 @@ using namespace std;
 
 // comparator function to sort vector pair based on value.
 bool cmp(pair<int, int> &a, pair<int, int> &b) {
-  return a.second < b.second;
+  return a.second > b.second;
 }
 
 // function to fill pixels value in each hue, sat, val channels of hsv color space.
@@ -23,40 +23,6 @@ void fill_pixels(cv::Vec3b *rptr, int col, int h_value, int s_value, int v_value
   rptr[col][0] = h_value;
   rptr[col][1] = s_value;
   rptr[col][2] = v_value;
-}
-
-// helper function to get moment values given a thresholded RGB image.
-vector<double> get_moments(cv::Mat &src) {
-  cv::Mat Thresholded_Grayscale_img, central_moment_image;
-  cv::cvtColor(src, Thresholded_Grayscale_img, cv::COLOR_BGR2GRAY);
-  cv::imshow("testing", Thresholded_Grayscale_img);
-  // calculate the moments of the Image.
-  cv::Moments moments = cv::moments(Thresholded_Grayscale_img);
-
-  // caluclate the Hu moments of the Image.
-  cv::Mat hu_moments;
-  cv::HuMoments(moments, hu_moments);
-
-  // find the mean of Hue moments.
-  vector<double> features;
-  double total_sum, mean, std, std_dev;
-  for (int i = 0; i < 7; i++) {
-	total_sum += hu_moments.at<double>(i);
-  }
-  mean = total_sum/7;
-
-  // find standard-deviation.
-  for (int i = 0; i < 7; i++) {
-	std += (hu_moments.at<double>(i) - mean)*(hu_moments.at<double>(i) - mean);
-  }
-  std_dev = ::sqrt(std/7);
-
-  // push standardized values into feature vector.
-  for (int i = 0; i < 7; i++) {
-	double val = (hu_moments.at<double>(i) - mean)/std_dev;
-	features.push_back(val);
-  }
-  return features;
 }
 
 /*
@@ -306,7 +272,7 @@ cv::Mat SegmentImage(cv::Mat &src) {
 /*
  * Function to compute the moments of regions in a given image.
  * Args-1-src  : Thrsholded RGB Image.
- * Returns a new Image with central Axis drawn on it.
+ * Returns a new Image with central Axis, OBB drawn on it.
  */
 cv::Mat calculate_moments(cv::Mat &src) {
   cv::Mat Thresholded_Grayscale_img, central_moment_image;
@@ -360,7 +326,6 @@ cv::Mat calculate_moments(cv::Mat &src) {
   double height = stats_matrix.at<int>(2, cv::CC_STAT_HEIGHT);
   double width = stats_matrix.at<int>(2, cv::CC_STAT_HEIGHT);
 
-  cout << height << " " << width << endl;
 
   // create a rotated rectangle.
   cv::RotatedRect rotatedRectangle(centerPoint, cv::Size2f(width, height), angle);
@@ -379,21 +344,88 @@ cv::Mat calculate_moments(cv::Mat &src) {
   return central_moment_image;
 }
 
+// Function to get the fill in an image.
+double calculate_fill(cv::Mat &src, cv::Point X1, cv::Point X2, cv::Point X3, cv::Point X4) {
+  // Create an empty image with the same size as the original image
+  cv::Mat mask = cv::Mat::zeros(src.size(), CV_8UC1);
+  vector<cv::Point> pts = {X1, X2, X3, X4};
+  // Draw the rectangle on the mask
+  cv::fillConvexPoly(mask, pts, cv::Scalar(255));
+
+  // Count the number of non-zero pixels in the mask
+  int fill = cv::countNonZero(mask);
+  cout << fill << endl;
+  // Calculate the area of the rectangle
+  double area = std::abs((X1.x*X2.y + X2.x*X3.y + X3.x*X4.y + X4.x*X1.y) - (X1.y*X2.x + X2.y*X3.x + X3.y*X4.x + X4.y*X1.x)) / 2.0;
+  cout << "area:" << area << endl;
+  // Calculate the percentage fill
+  double percent_fill = (static_cast<double>(fill)/static_cast<double>(area)) * 100;
+
+  return percent_fill;
+}
+
+// Function to collect feature vectors.
+vector<double> get_features(cv::Mat &src) {
+  vector<double> features;
+  cv::Mat thresholded_greyscale_img, ImageIds, stats_matrix, centroids;
+  cv::cvtColor(src, thresholded_greyscale_img, cv::COLOR_BGR2GRAY);
+  int num_components =
+	  cv::connectedComponentsWithStats(thresholded_greyscale_img, ImageIds, stats_matrix, centroids, 4);
+  vector<pair<int, int>> areas;
+  for (int i = 1; i < num_components; i++) {
+	int area = stats_matrix.at<int>(i, cv::CC_STAT_AREA);
+	areas.push_back(make_pair(i, area));
+  }
+  sort(areas.begin(), areas.end(), cmp);
+
+  /*
+   * Get all the required features.
+     1. Percentage filled.
+     2. Height-Width ratio.
+     3.
+   */
+  double height = stats_matrix.at<int>(areas[0].first, cv::CC_STAT_HEIGHT);
+  double width = stats_matrix.at<int>(areas[0].first, cv::CC_STAT_WIDTH);
+
+  // calculate the moments of the Image.
+  cv::Moments moments = cv::moments(thresholded_greyscale_img);
+
+  // caluclate the Hu moments of the Image.
+  cv::Mat hu_moments;
+  cv::HuMoments(moments, hu_moments);
+
+  // calculate the axis of central moments.
+  double u20 = hu_moments.at<double>(2, 0);
+  double u02 = hu_moments.at<double>(0, 2);
+  double u11 = hu_moments.at<double>(1, 1);
+  double theta = 0.5*::atan2(2*u11, u20 - u02);
+
+  // calculate centroid of the image.
+  double x_cor = moments.m10/moments.m00;
+  double y_cor = moments.m01/moments.m00;
+
+  double angle = 0.5*(::atan((2*u11)/(u20 - u02)));
+
+  cv::Point centerPoint(x_cor, y_cor);
+  cv::Scalar color = cv::Scalar(234, 234, 123);
+
+  cv::RotatedRect rotatedRectangle(centerPoint, cv::Size2f(width, height), angle);
+
+  // We take the edges that OpenCV calculated for us
+  cv::Point2f vertices2f[4];
+  rotatedRectangle.points(vertices2f);
+  double percent_fill =
+	  calculate_fill(thresholded_greyscale_img, vertices2f[0], vertices2f[1], vertices2f[2], vertices2f[3]);
+  cout << percent_fill;
+  return features;
+}
+
 /*
  * Function that stores Moments as fearues in a csv file given a Thresholded RGB Image.
  * Args-1-src  : Thresholded RGB Image.
  */
 int collect_data(cv::Mat &src, string label) {
   vector<double> features;
-  features = get_moments(src);
-  // Taking the label from console.
-  char filename[256] =
-	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv";
-  if (label=="") {
-	cin >> label;
-  }
-  char class_type[256];
-  ::strcpy(class_type, label.c_str());
-  append_image_data_csv(filename, class_type, features, 0);
+  features = get_features(src);
   return 0;
 }

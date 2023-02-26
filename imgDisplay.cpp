@@ -14,7 +14,7 @@
 using namespace std;
 int main(int argc, char *argv[]) {
   string img_path =
-	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Data/Train/Mouse/IMG_1309.png";
+	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Data/Train/Mouse/IMG_1319.png";
   cv::Mat color_image = cv::imread(img_path); // Mat object to store original frame.
   if (color_image.empty()) {
 	cout << "could not load and display the image" << endl;
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   Dialation(Dialation_distance, HSVthresholded_image, 5); // Perform Dialation.
   cv::Mat thresholded_Image; // mat object to store final thresholded RGB Image.
   cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
-
+  collect_data(thresholded_Image);
   cv::Mat Segmented_Image = SegmentImage(thresholded_Image); // perform segmentation.
 
   // Calculating axis of least central moment.
