@@ -14,7 +14,7 @@
 using namespace std;
 int main(int argc, char *argv[]) {
   string img_path =
-	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Proj03Examples/segment-test.png";
+	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Data/Train/Mouse/IMG_1319.png";
   cv::Mat color_image = cv::imread(img_path); // Mat object to store original frame.
   if (color_image.empty()) {
 	cout << "could not load and display the image" << endl;
@@ -28,7 +28,8 @@ int main(int argc, char *argv[]) {
   threshold(HSV_Image, HSVthresholded_image); // Threshold the Hsv image.
   vector<vector<int>> Erosion_distance = GrassfireTransform(HSVthresholded_image); // Vector to store Erosion distances.
   Erosion(Erosion_distance, HSVthresholded_image, 5); // Perfrom Erosion.
-  vector<vector<int>> Dialation_distance = GrassfireTransform1(HSVthresholded_image); // Vector to store Dialation distances.
+  vector<vector<int>>
+	  Dialation_distance = GrassfireTransform1(HSVthresholded_image); // Vector to store Dialation distances.
   Dialation(Dialation_distance, HSVthresholded_image, 5); // Perform Dialation.
   cv::Mat thresholded_Image; // mat object to store final thresholded RGB Image.
   cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
@@ -51,7 +52,7 @@ int main(int argc, char *argv[]) {
 	if (k=='q') { // destroy all windows when 'q' is pressed.
 	  cv::destroyAllWindows();
 	  break;
-	} else if (k == 'n') { // save the image features to db when 'N' is pressed.
+	} else if (k=='n') { // save the image features to db when 'N' is pressed.
 	  collect_data(thresholded_Image);
 	}
 

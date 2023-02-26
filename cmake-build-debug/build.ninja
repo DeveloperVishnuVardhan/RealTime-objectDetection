@@ -178,6 +178,53 @@ build classify.cpp: CXX_EXECUTABLE_LINKER__classify.2ecpp_Debug CMakeFiles/class
   TARGET_FILE = classify.cpp
   TARGET_PDB = classify.cpp.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target training.cpp
+
+
+#############################################
+# Order-only phony target for training.cpp
+
+build cmake_object_order_depends_target_training.cpp: phony || CMakeFiles/training.cpp.dir
+
+build CMakeFiles/training.cpp.dir/training.cpp.o: CXX_COMPILER__training.2ecpp_Debug /Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/training.cpp || cmake_object_order_depends_target_training.cpp
+  DEP_FILE = CMakeFiles/training.cpp.dir/training.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -std=gnu++11
+  INCLUDES = -isystem /usr/local/include/opencv4
+  OBJECT_DIR = CMakeFiles/training.cpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/training.cpp.dir
+
+build CMakeFiles/training.cpp.dir/filters.cpp.o: CXX_COMPILER__training.2ecpp_Debug /Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/filters.cpp || cmake_object_order_depends_target_training.cpp
+  DEP_FILE = CMakeFiles/training.cpp.dir/filters.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -std=gnu++11
+  INCLUDES = -isystem /usr/local/include/opencv4
+  OBJECT_DIR = CMakeFiles/training.cpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/training.cpp.dir
+
+build CMakeFiles/training.cpp.dir/csv_util.cpp.o: CXX_COMPILER__training.2ecpp_Debug /Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/csv_util.cpp || cmake_object_order_depends_target_training.cpp
+  DEP_FILE = CMakeFiles/training.cpp.dir/csv_util.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -std=gnu++11
+  INCLUDES = -isystem /usr/local/include/opencv4
+  OBJECT_DIR = CMakeFiles/training.cpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/training.cpp.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target training.cpp
+
+
+#############################################
+# Link the executable training.cpp
+
+build training.cpp: CXX_EXECUTABLE_LINKER__training.2ecpp_Debug CMakeFiles/training.cpp.dir/training.cpp.o CMakeFiles/training.cpp.dir/filters.cpp.o CMakeFiles/training.cpp.dir/csv_util.cpp.o | /usr/local/lib/libopencv_gapi.4.7.0.dylib /usr/local/lib/libopencv_highgui.4.7.0.dylib /usr/local/lib/libopencv_ml.4.7.0.dylib /usr/local/lib/libopencv_objdetect.4.7.0.dylib /usr/local/lib/libopencv_photo.4.7.0.dylib /usr/local/lib/libopencv_stitching.4.7.0.dylib /usr/local/lib/libopencv_video.4.7.0.dylib /usr/local/lib/libopencv_videoio.4.7.0.dylib /usr/local/lib/libopencv_imgcodecs.4.7.0.dylib /usr/local/lib/libopencv_dnn.4.7.0.dylib /usr/local/lib/libopencv_calib3d.4.7.0.dylib /usr/local/lib/libopencv_features2d.4.7.0.dylib /usr/local/lib/libopencv_flann.4.7.0.dylib /usr/local/lib/libopencv_imgproc.4.7.0.dylib /usr/local/lib/libopencv_core.4.7.0.dylib
+  FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk
+  LINK_LIBRARIES = -Wl,-rpath,/usr/local/lib  /usr/local/lib/libopencv_gapi.4.7.0.dylib  /usr/local/lib/libopencv_highgui.4.7.0.dylib  /usr/local/lib/libopencv_ml.4.7.0.dylib  /usr/local/lib/libopencv_objdetect.4.7.0.dylib  /usr/local/lib/libopencv_photo.4.7.0.dylib  /usr/local/lib/libopencv_stitching.4.7.0.dylib  /usr/local/lib/libopencv_video.4.7.0.dylib  /usr/local/lib/libopencv_videoio.4.7.0.dylib  /usr/local/lib/libopencv_imgcodecs.4.7.0.dylib  /usr/local/lib/libopencv_dnn.4.7.0.dylib  /usr/local/lib/libopencv_calib3d.4.7.0.dylib  /usr/local/lib/libopencv_features2d.4.7.0.dylib  /usr/local/lib/libopencv_flann.4.7.0.dylib  /usr/local/lib/libopencv_imgproc.4.7.0.dylib  /usr/local/lib/libopencv_core.4.7.0.dylib
+  OBJECT_DIR = CMakeFiles/training.cpp.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = training.cpp
+  TARGET_PDB = training.cpp.dbg
+
 
 #############################################
 # Utility command for edit_cache
@@ -212,7 +259,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 #############################################
 # Folder: /Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/cmake-build-debug
 
-build all: phony main.cpp imgDisplay.cpp classify.cpp
+build all: phony main.cpp imgDisplay.cpp classify.cpp training.cpp
 
 # =============================================================================
 # Unknown Build Time Dependencies.

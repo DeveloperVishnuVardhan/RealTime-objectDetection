@@ -52,25 +52,23 @@ vector<pair<string, double>> scaledEuclidean(cv::Mat &colorImg, cv::Mat &testImg
   // get the feature vectors and associated labels.
   read_image_data_csv(traindbPath, filenames, featureVectors);
   cv::Mat target_features = get_moments(testImg);
-
   // find the euclidean distance and store them in a vector<pairs>
   vector<pair<string, double>> distances;
   for (int i = 0; i < featureVectors.size(); i++) {
-	double euclidean_dist = 0.0;
+	double euclidean_dist = 0;
 	for (int j = 0; j < featureVectors[i].size(); j++) {
-	  double x1 = 0.0;
-	  double x2 = 0.0;
-	  if (!::isnan(featureVectors[i][j]))
-		x1 = featureVectors[i][j];
-
-	  if (!::isnan(-1*::copysign(1.0, target_features.at<double>(j))*::log10(target_features.at<double>(j))))
-		x2 = -1*::copysign(1.0, target_features.at<double>(j))*::log10(target_features.at<double>(j));
+	  double x1 = featureVectors[i][j];
+	  double x2 = log(abs(target_features.at<double>(j)));
+	  cout << x2 << " ";
 	  euclidean_dist += (x1 - x2)*(x1 - x2);
 	}
-	distances.emplace_back(filenames[i], euclidean_dist);
+	distances.emplace_back(filenames[i], sqrt(euclidean_dist));
   }
   // sort the distances.
   sort(distances.begin(), distances.end(), cmp);
+  for (int i = 0; i < distances.size(); i++) {
+	cout << distances[i].first << ":" << distances[i].second << endl;
+  }
   return distances;
 }
 

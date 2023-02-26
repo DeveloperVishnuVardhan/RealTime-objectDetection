@@ -50,10 +50,10 @@ int threshold(cv::Mat &src, cv::Mat &dst) {
   int hue_low, sat_low, val_low, hue_high, sat_high, val_high;
   hue_low = 0;
   sat_low = 0;
-  val_low = 0;
+  val_low = 180;
 
-  hue_high = 179;
-  sat_high = 25;
+  hue_high = 250;
+  sat_high = 30;
   val_high = 255;
 
   // Iterate through rows.
@@ -334,19 +334,22 @@ cv::Mat calculate_moments(cv::Mat &src) {
  * Function that stores Moments as fearues in a csv file given a Thresholded RGB Image.
  * Args-1-src  : Thresholded RGB Image.
  */
-int collect_data(cv::Mat &src) {
+int collect_data(cv::Mat &src, string label) {
   vector<double> features;
   cv::Mat hu_moments = get_moments(src);
 
   for (int i = 0; i < hu_moments.rows; i++) {
-	features.push_back(-1*::copysign(1.0, hu_moments.at<double>(i))*::log10(hu_moments.at<double>(i)));
+	features.push_back(log(abs(hu_moments.at<double>(i))));
   }
 
   // Taking the label from console.
-  char label[256];
   char filename[256] =
 	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv";
-  cin >> label;
-  append_image_data_csv(filename, label, features, 0);
+  if (label=="") {
+	cin >> label;
+  }
+  char class_type[256];
+  ::strcpy(class_type, label.c_str());
+  append_image_data_csv(filename, class_type, features, 0);
   return 0;
 }
