@@ -29,22 +29,22 @@ string get_label(string path, char delimeter) {
   return words[6];
 }
 
-void iterateDirectory(fs::path path) {
+void iterateDirectory(fs::path path, char thresh_type[]) {
   for (const auto &entry : fs::directory_iterator(path)) {
 	if (entry.is_directory()) {
 	  // get the path and name of the subdirectory
 	  fs::path subdir_path = entry.path();
 	  // recursively call iterateDirectory for the subdirectory
-	  iterateDirectory(subdir_path);
+	  iterateDirectory(subdir_path, thresh_type);
 	} else {
 	  if (entry.path().filename()!=".DS_Store")
 		string img_path =
 			entry.path();
+	  cv::Mat blurred_color_image, HSV_Image; // Mat object to store blurred, HSV_images.
 	  cv::Mat color_image = cv::imread(entry.path()); // Mat object to store original frame.
 	  if (color_image.empty()) {
 		continue;
 	  }
-	  /*cv::Mat blurred_color_image, HSV_Image; // Mat object to store blurred, HSV_images.
 	  cv::medianBlur(color_image, blurred_color_image, 5); // Blurring the color Image.
 	  cv::cvtColor(blurred_color_image, HSV_Image, cv::COLOR_BGR2HSV); // Turing into HSV color space.
 	  cv::Mat HSVthresholded_image; // Mat object to store thresholded image.
@@ -57,16 +57,22 @@ void iterateDirectory(fs::path path) {
 	  Dialation(Dialation_distance, HSVthresholded_image, 5); // Perform Dialation.
 	  cv::Mat thresholded_Image; // mat object to store final thresholded RGB Image.
 	  cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
-	  //cout << entry.path();*/
 	  string label = get_label(entry.path(), '/');
-	  collect_data(color_image, label);
+	  if (::strcmp(thresh_type, "adaptive")==0) {
+		collect_data(color_image, thresh_type, label);
+	  } else {
+		collect_data(thresholded_Image, thresh_type, label);
+	  }
 	}
   }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
   fs::path path = "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Data/Train";
-  iterateDirectory(path);
+  char thresh_type[256];
+  ::strcpy(thresh_type, argv[1]);
+  cout << thresh_type;
+  iterateDirectory(path, thresh_type);
 
   return 0;
 }

@@ -26,16 +26,17 @@ void fill_pixels(cv::Vec3b *rptr, int col, int h_value, int s_value, int v_value
 }
 
 // helper function to get moment values given a thresholded RGB image.
-vector<double> get_moments(cv::Mat &src) {
+vector<double> get_moments(cv::Mat &src, char threshtype[]) {
   cv::Mat gray;
   cv::cvtColor(src, gray, cv::COLOR_BGR2GRAY);
 
   // Apply adaptive thresholding
   cv::Mat binary;
-  cv::adaptiveThreshold(gray, binary, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 11, 2);
-
-  // Display the binary image
-  cv::imshow("Binary Image", binary);
+  if (::strcmp(threshtype, "adaptive")==0)
+	cv::adaptiveThreshold(gray, binary, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 11, 2);
+  else {
+	binary = gray.clone();
+  }
 
   vector<double> features;
   cv::Moments moments = cv::moments(binary, true);
@@ -371,9 +372,9 @@ cv::Mat calculate_moments(cv::Mat &src) {
  * Function that stores Moments as fearues in a csv file given a Thresholded RGB Image.
  * Args-1-src  : Thresholded RGB Image.
  */
-int collect_data(cv::Mat &src, string label) {
+int collect_data(cv::Mat &src, char threshtype[], string label) {
   vector<double> features;
-  features = get_moments(src);
+  features = get_moments(src, threshtype);
   // Taking the label from console.
   char filename[256] =
 	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv";

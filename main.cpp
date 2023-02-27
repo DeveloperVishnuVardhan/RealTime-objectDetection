@@ -37,9 +37,9 @@ int main(int argc, char *argv[]) {
 	vector<pair<string, double>> distances; // Vector to store distances from each Image in database to test image.
 
 	if (::strcmp(classifier, "scaledeuclidean")==0)
-	  distances = scaledEuclidean(test_color_img, test_color_img, train_db);
+	  distances = scaledEuclidean(test_color_img, train_db);
 	if (::strcmp(classifier, "knn")==0) {
-	  distances = knnClassifier(test_color_img, test_color_img, train_db, 15);
+	  distances = knnClassifier(test_color_img, train_db, 15, "scaled_euclidean");
 	}
 
 	for (int i = 0; i < distances.size(); i++) {
