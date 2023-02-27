@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 
   // Calculating axis of least central moment.
   cv::Mat central_moment_image = calculate_moments(thresholded_Image);
-  //collect_data(thresholded_Image);
+  collect_data(color_image);
 
   while (true) {
 	cv::namedWindow("color-Image", 1);

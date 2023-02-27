@@ -27,12 +27,18 @@ void fill_pixels(cv::Vec3b *rptr, int col, int h_value, int s_value, int v_value
 
 // helper function to get moment values given a thresholded RGB image.
 vector<double> get_moments(cv::Mat &src) {
-  cv::Mat Grayscale_img;
-  cv::cvtColor(src, Grayscale_img, cv::COLOR_BGR2GRAY);
+  cv::Mat gray;
+  cv::cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+
+  // Apply adaptive thresholding
+  cv::Mat binary;
+  cv::adaptiveThreshold(gray, binary, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 11, 2);
+
+  // Display the binary image
+  cv::imshow("Binary Image", binary);
+
   vector<double> features;
-  cv::Mat thresholded_grayscale_img;
-  cv::threshold(Grayscale_img, thresholded_grayscale_img, 128, 255, cv::THRESH_BINARY);
-  cv::Moments moments = cv::moments(thresholded_grayscale_img, false);
+  cv::Moments moments = cv::moments(binary, true);
   double huMoments[7];
   cv::HuMoments(moments, huMoments);
   for (int i = 0; i < 7; i++) {
@@ -377,5 +383,5 @@ int collect_data(cv::Mat &src, string label) {
   char class_type[256];
   ::strcpy(class_type, label.c_str());
   append_image_data_csv(filename, class_type, features, 0);
-  return 0;
+  //return 0;
 }

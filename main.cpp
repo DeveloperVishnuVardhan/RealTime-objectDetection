@@ -6,8 +6,7 @@
  */
 #include <iostream>
 #include<opencv2/opencv.hpp>
-#include "filters.h"
-#include <ctime>
+#include "distance_metrics.h"
 
 using namespace std;
 int main(int argc, char *argv[]) {
@@ -19,13 +18,9 @@ int main(int argc, char *argv[]) {
 	return -1;
   }
 
-  cv::Mat blurred_color_image, HSV_Image; // Mat object to store HSV_image.
-  cv::Mat HSVthresholded_image; // Mat object to store thresholded image.
-  cv::Mat thresholded_Image;
-
   while (true) {
-	cv::Mat color_image; // Mat object to store original frame.
-	bool bSucces = cap.read(color_image);
+	cv::Mat test_color_img; // Mat object to store original frame.
+	bool bSucces = cap.read(test_color_img);
 
 	// Break the while loop if frame cannot be captured.
 	if (!bSucces) {
@@ -33,43 +28,32 @@ int main(int argc, char *argv[]) {
 	  cin.get();
 	  break;
 	}
-	cv::medianBlur(color_image, blurred_color_image, 5);
-	cv::cvtColor(blurred_color_image, HSV_Image, cv::COLOR_BGR2HSV);
-	threshold(HSV_Image, HSVthresholded_image);
-	vector<vector<int>> Erosion_distance = GrassfireTransform(HSVthresholded_image);
-	Erosion(Erosion_distance, HSVthresholded_image, 2);
-	vector<vector<int>> Dialation_distance = GrassfireTransform1(HSVthresholded_image);
-	Dialation(Dialation_distance, HSVthresholded_image, 2);
-	cv::Mat thresholded_Image;
-	cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
+	char train_db[256]; // storing path to train database.
+	char classifier[256]; // storing classifier type.
+	::strcpy(train_db,
+			 "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv");
+	::strcpy(classifier, argv[1]);
 
-	cv::Mat Segmented_Image = SegmentImage(thresholded_Image); // perform segmentation.
+	vector<pair<string, double>> distances; // Vector to store distances from each Image in database to test image.
 
+	if (::strcmp(classifier, "scaledeuclidean")==0)
+	  distances = scaledEuclidean(test_color_img, test_color_img, train_db);
+	if (::strcmp(classifier, "knn")==0) {
+	  distances = knnClassifier(test_color_img, test_color_img, train_db, 15);
+	}
 
+	for (int i = 0; i < distances.size(); i++) {
+	  cout << distances[i].first << distances[i].second << endl;
+	}
 
-
+	create_classified_image(test_color_img, distances);
 	// display the windows
-	cv::namedWindow("color-Image", 1);
-	cv::imshow("color-Image", color_image);
-	cv::imshow("Threshold-Image", thresholded_Image);
-	cv::imshow("segmented-Image", Segmented_Image);
+	cv::imshow("classified-image", test_color_img);
 	int k = cv::waitKey(10);
 
 	if (k=='q') {
 	  cv::destroyAllWindows();
 	  break;
-	} else if (k=='s') {
-	  time_t now = time(0);
-	  // convert now to string form
-	  char *dt = ctime(&now);
-	  string color_image_path =
-		  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Proj03Examples/Testing/color_erosion.png";
-	  string thresholded_image_path =
-		  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Proj03Examples/Testing/threshold_after_erosion.png";
-	  // save_color_image
-	  cv::imwrite(color_image_path, color_image);
-	  cv::imwrite(thresholded_image_path, thresholded_Image);
 	}
-	//break;
   }
 }

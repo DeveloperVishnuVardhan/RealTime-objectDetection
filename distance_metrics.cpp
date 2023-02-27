@@ -45,7 +45,7 @@ int create_classified_image(cv::Mat &src,
 
  returns a Vector pair of distances with lable, distances as pairs in sorted order.
  */
-vector<pair<string, double>> scaledEuclidean(cv::Mat &colorImg, cv::Mat &testImg, char traindbPath[]) {
+vector<pair<string, double>> scaledEuclidean(cv::Mat &testImg, char traindbPath[]) {
   vector<char *> filenames; // Vector to store filenames.
   vector<vector<double>> featureVectors; // Vector to store feature vectors.
 
@@ -80,9 +80,9 @@ vector<pair<string, double>> scaledEuclidean(cv::Mat &colorImg, cv::Mat &testImg
 
  returns a vector pair with label,count pairs in sorted order(descending).
  */
-vector<pair<string, double>> knnClassifier(cv::Mat &colorImg, cv::Mat &testImg, char traindbpath[], int k_value) {
+vector<pair<string, double>> knnClassifier(cv::Mat &testImg, char traindbpath[], int k_value) {
   vector<pair<string, double>> euclidean_distances; // Vector pair to store euclidean-distances.
-  euclidean_distances = scaledEuclidean(colorImg, testImg, traindbpath); // compute euclidean distances.
+  euclidean_distances = scaledEuclidean(testImg, traindbpath); // compute euclidean distances.
 
   unordered_map<string, double> counts; // Hashmap to store counts of first k-closest labels
   for (int i = 0; i < k_value; i++) {

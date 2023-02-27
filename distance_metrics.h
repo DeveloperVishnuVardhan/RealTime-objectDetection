@@ -15,7 +15,7 @@ using namespace std;
 
  returns the label of the testImage as a string.
  */
-vector<pair<string, double>> scaledEuclidean(cv::Mat &colorImg, cv::Mat &testImg, char traindbPath[]);
+vector<pair<string, double>> scaledEuclidean(cv::Mat &testImg, char traindbPath[]);
 
 // function to add label to the Image and display it.
 int create_classified_image(cv::Mat &src,
@@ -29,5 +29,5 @@ int create_classified_image(cv::Mat &src,
 
  returns a vector pair with label,count pairs in sorted order(descending).
  */
-vector<pair<string, double>> knnClassifier(cv::Mat &colorImg, cv::Mat &testImg, char traindbpath[], int k_value);
+vector<pair<string, double>> knnClassifier(cv::Mat &testImg, char traindbpath[], int k_value);
 #endif //MAIN_CPP__DISTANCE_METRICS_H_

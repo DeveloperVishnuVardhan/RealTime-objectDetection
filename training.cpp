@@ -56,8 +56,8 @@ void iterateDirectory(fs::path path) {
 		  Dialation_distance = GrassfireTransform1(HSVthresholded_image); // Vector to store Dialation distances.
 	  Dialation(Dialation_distance, HSVthresholded_image, 5); // Perform Dialation.
 	  cv::Mat thresholded_Image; // mat object to store final thresholded RGB Image.
-	  cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);*/
-	  //cout << entry.path();
+	  cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
+	  //cout << entry.path();*/
 	  string label = get_label(entry.path(), '/');
 	  collect_data(color_image, label);
 	}
