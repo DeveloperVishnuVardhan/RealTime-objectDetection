@@ -1,6 +1,9 @@
-//
-// Created by Jyothi vishnu vardhan Kolla on 2/22/23.
-//
+/*
+ * Authors:
+ * 1. Jyothi Vishnu Vardhan Kolla.
+ * 2. Vidya ganesh.
+ * CS-5330 Spring 2023 semester.
+ */
 
 #ifndef MAIN_CPP__DISTANCE_METRICS_H_
 #define MAIN_CPP__DISTANCE_METRICS_H_
@@ -37,5 +40,8 @@ vector<pair<string, double>> knnClassifier(cv::Mat &testImg,
 										   string distance_metric,
 										   char threshtype[]);
 
+/*
+ * Function to perform evaluaton on the test-data
+ */
 int evaluation(fs::path path, string distance_metric, char threshtype[]);
 #endif //MAIN_CPP__DISTANCE_METRICS_H_

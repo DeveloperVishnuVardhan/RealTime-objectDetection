@@ -146,7 +146,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=main.cpp
+CMAKE_PROJECT_NAME:STATIC=imgDisplay.cpp.cpp
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib
@@ -221,6 +221,15 @@ Project_3_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 Project_3_SOURCE_DIR:STATIC=/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3
+
+//Value Computed by CMake
+imgDisplay.cpp.cpp_BINARY_DIR:STATIC=/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/cmake-build-debug
+
+//Value Computed by CMake
+imgDisplay.cpp.cpp_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+imgDisplay.cpp.cpp_SOURCE_DIR:STATIC=/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3
 
 //Value Computed by CMake
 main.cpp_BINARY_DIR:STATIC=/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/cmake-build-debug

@@ -14,7 +14,7 @@
 using namespace std;
 int main(int argc, char *argv[]) {
   string img_path =
-	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Data/Train/Mouse/IMG_1319.png";
+	  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Proj03Examples/multi-object.png";
   cv::Mat color_image = cv::imread(img_path); // Mat object to store original frame.
   if (color_image.empty()) {
 	cout << "could not load and display the image" << endl;
@@ -33,12 +33,10 @@ int main(int argc, char *argv[]) {
   Dialation(Dialation_distance, HSVthresholded_image, 5); // Perform Dialation.
   cv::Mat thresholded_Image; // mat object to store final thresholded RGB Image.
   cv::cvtColor(HSVthresholded_image, thresholded_Image, cv::COLOR_HSV2BGR);
-  collect_data(thresholded_Image);
   cv::Mat Segmented_Image = SegmentImage(thresholded_Image); // perform segmentation.
 
-  // Calculating axis of least central moment.
+  //Calculating axis of least central moment.
   cv::Mat central_moment_image = calculate_moments(thresholded_Image);
-  collect_data(color_image);
 
   while (true) {
 	cv::namedWindow("color-Image", 1);
@@ -46,14 +44,11 @@ int main(int argc, char *argv[]) {
 	cv::imshow("Threshold-Image", thresholded_Image);
 	cv::imshow("segmented-Image", Segmented_Image);
 	cv::imshow("Central-moments", central_moment_image);
-	//cv::imshow("Segmented-Image", color_image);
 	int k = cv::waitKey(0);
 
 	if (k=='q') { // destroy all windows when 'q' is pressed.
 	  cv::destroyAllWindows();
 	  break;
-	} else if (k=='n') { // save the image features to db when 'N' is pressed.
-	  collect_data(thresholded_Image);
 	}
 
   }

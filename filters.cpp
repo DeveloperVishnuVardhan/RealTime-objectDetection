@@ -283,11 +283,17 @@ cv::Mat SegmentImage(cv::Mat &src) {
 	colors[i] = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
   }
 
+  for (int i=1; i < num_components; i++) {
+	cv::Scalar color = colors[i];
+	cv::Mat mask = ImageIds == i;
+	segmented_image.setTo(color, mask);
+  }
+
   // Label each component with a different color
   for (int i = 1; i < num_components; i++) {
 	cv::Rect rect(stats_matrix.at<int>(i, cv::CC_STAT_LEFT), stats_matrix.at<int>(i, cv::CC_STAT_TOP),
 				  stats_matrix.at<int>(i, cv::CC_STAT_WIDTH), stats_matrix.at<int>(i, cv::CC_STAT_HEIGHT));
-	cv::rectangle(segmented_image, rect, colors[i], 2);
+	cv::rectangle(segmented_image, rect, colors[i], 8);
   }
   return segmented_image;
 }
@@ -323,10 +329,10 @@ cv::Mat calculate_moments(cv::Mat &src) {
   double cos_theta = cos(theta);
   double sin_theta = sin(theta);
 
-  double x1_point = x_cor - 100*sin_theta;
-  double y1_point = y_cor - 100*cos_theta;
-  double x2_point = x_cor + 100*sin_theta;
-  double y2_point = y_cor + 100*cos_theta;
+  double x1_point = x_cor - 400*sin_theta;
+  double y1_point = y_cor - 400*cos_theta;
+  double x2_point = x_cor + 400*sin_theta;
+  double y2_point = y_cor + 400*cos_theta;
 
   double angle = 0.5*(::atan((2*u11)/(u20 - u02)));
 
@@ -336,7 +342,7 @@ cv::Mat calculate_moments(cv::Mat &src) {
 		   cv::Point(x1_point, y1_point),
 		   cv::Point(x2_point, y2_point),
 		   cv::Scalar(0, 0, 255),
-		   2);
+		   5);
 
   // draw a oriented bounding box.
   cv::Point centerPoint(x_cor, y_cor);
@@ -360,7 +366,7 @@ cv::Mat calculate_moments(cv::Mat &src) {
 
   // Convert them so we can use them in a fillConvexPoly
   for (int i = 0; i < 4; ++i) {
-	cv::line(central_moment_image, vertices2f[i], vertices2f[(i + 1)%4], cv::Scalar(0, 255, 0), 2);
+	cv::line(central_moment_image, vertices2f[i], vertices2f[(i + 1)%4], cv::Scalar(0, 255, 0), 5);
   }
 
   // Now we can fill the rotated rectangle with our specified color

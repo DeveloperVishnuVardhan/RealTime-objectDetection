@@ -32,9 +32,9 @@ int create_classified_image(cv::Mat &src,
   label = distances[0].first;
 
   cv::Point text_position(80, 80);
-  int font_size = 1;
+  int font_size = 3;
   cv::Scalar font_color(0, 0, 0);
-  int font_weight = 2;
+  int font_weight = 4;
   cv::putText(src, label, text_position, cv::FONT_HERSHEY_COMPLEX, font_size, font_color, font_weight);
   return 0;
 }
@@ -182,8 +182,7 @@ vector<pair<string, double>> scaledEuclidean(cv::Mat &testImg, char traindbPath[
   // sort the distances.
   sort(distances.begin(), distances.end(), cmp);
   double std = get_std_distances(distances);
-
-  if (distances[0].second > 2*std) {
+  if (distances[0].second > 3*std) {
 	cout << "It is a new object" << endl;
 	cout << "enter new label:" << endl;
 	string label;
@@ -191,6 +190,7 @@ vector<pair<string, double>> scaledEuclidean(cv::Mat &testImg, char traindbPath[
 	collect_data(testImg, threshtype, label);
 	::exit(-1);
   }
+
   return distances;
 }
 
@@ -274,7 +274,8 @@ int evaluation(fs::path path, string distance_metric, char threshtype[]) {
 	  counts = knnClassifier(color_image,
 							 "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/train.csv",
 							 15,
-							 distance_metric, threshtype);
+							 distance_metric,
+							 threshtype);
 	  char original_label[256];
 	  char filename[256] =
 		  "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/eval.csv";

@@ -39,7 +39,8 @@ int Erosion(std::vector<std::vector<int>> &distances, cv::Mat &src, int erosion_
 /*
  * Funtion to perform Dialation.
  * Arg1-distances: distances matrix after performing Grassfire transform.
- * Arg-2 erosion_length: Number of dialtaions to perform.
+ * Arg-2-distances:
+ * Arg-3 erosion_length: Number of dialtaions to perform.
  */
 int Dialation(std::vector<std::vector<int>> &distances, cv::Mat &src, int dialation_length);
 
@@ -60,7 +61,6 @@ cv::Mat calculate_moments(cv::Mat &src);
 std::vector<double> get_moments(cv::Mat &src, char thresh_type[]);
 /*
  * Function that stores Moments as fearues in a csv file given a Thresholded RGB Image.
- * Args-1-src  : Thresholded RGB Image.
  */
 int collect_data(cv::Mat &src, char threshtype[], std::string label = "");
 #endif //MAIN_CPP__FILTERS_H_

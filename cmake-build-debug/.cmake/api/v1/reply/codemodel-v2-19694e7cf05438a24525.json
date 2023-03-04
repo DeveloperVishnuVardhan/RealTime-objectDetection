@@ -18,7 +18,8 @@
 						0,
 						1,
 						2,
-						3
+						3,
+						4
 					]
 				}
 			],
@@ -30,13 +31,14 @@
 					[
 						0
 					],
-					"name" : "main.cpp",
+					"name" : "imgDisplay.cpp.cpp",
 					"targetIndexes" : 
 					[
 						0,
 						1,
 						2,
-						3
+						3,
+						4
 					]
 				}
 			],
@@ -45,28 +47,35 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "classify.cpp::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-classify.cpp-Debug-4b71857f890ad8d54d58.json",
+					"jsonFile" : "target-classify.cpp-Debug-405e0577b11eb477610f.json",
 					"name" : "classify.cpp",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
+					"id" : "dnn.cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-dnn.cpp-Debug-af1ffe2b07fa6c47c604.json",
+					"name" : "dnn.cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
 					"id" : "imgDisplay.cpp::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-imgDisplay.cpp-Debug-ccb5452f5ce3bce7d083.json",
+					"jsonFile" : "target-imgDisplay.cpp-Debug-1f684ec44584c3bb1c85.json",
 					"name" : "imgDisplay.cpp",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "main.cpp::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-main.cpp-Debug-61b8cd6b3e332f921a1e.json",
+					"jsonFile" : "target-main.cpp-Debug-b34be5576fd7f8e077a7.json",
 					"name" : "main.cpp",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "training.cpp::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-training.cpp-Debug-c1df8a2f3156477ac741.json",
+					"jsonFile" : "target-training.cpp-Debug-df06a8d841cf09ca5791.json",
 					"name" : "training.cpp",
 					"projectIndex" : 0
 				}

@@ -819,7 +819,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "main.cpp"
+			"value" : "imgDisplay.cpp.cpp"
 		},
 		{
 			"name" : "CMAKE_RANLIB",
@@ -1151,6 +1151,42 @@
 		},
 		{
 			"name" : "Project_3_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3"
+		},
+		{
+			"name" : "imgDisplay.cpp.cpp_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/Users/jyothivishnuvardhankolla/Desktop/Project-3Real-time-object-2DRecognition/Project-3/cmake-build-debug"
+		},
+		{
+			"name" : "imgDisplay.cpp.cpp_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "imgDisplay.cpp.cpp_SOURCE_DIR",
 			"properties" : 
 			[
 				{
